@@ -4,27 +4,36 @@ const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_PORT = process.env.DB_PORT;
 const DB_NAME = process.env.DB_NAME;
+const DB_CONNECTION = process.env.DB_CONNECTION;
 const { Sequelize } = require ('sequelize');
 const fs = require ('fs');
 const path = require('path');
 
 //Instancia de Sequelize y DB
 const sequelize = new Sequelize(
-    `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
+    // `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
+    DB_CONNECTION,
     {
         logging: false,
-        native: false
+        native: false,
+        dialectOptions: {
+          ssl: true, // Desactiva SSL
+          ssl: {
+            require: true,
+            rejectUnauthorized: false
+          }
+        },
     }
 );
 
-const testingConection = function(){
-  sequelize.authenticate().then(() => {
-    console.log(`Sequelize has successfully been conected to the ${DB_NAME} Database in the PORT ${DB_PORT}.`)
-  }).catch((error) => {
-    console.log(`Unable to connect to the database: ${error, error.message}`);
-  });
-};
-testingConection();
+// const testingConection = function(){
+//   sequelize.authenticate().then(() => {
+//     console.log(`Sequelize has successfully been conected to the ${DB_NAME} Database in the PORT ${DB_PORT}.`)
+//   }).catch((error) => {
+//     console.log(`Unable to connect to the database: ${error, error.message}`);
+//   });
+// };
+// testingConection();
 
 const basename = path.basename(__filename);
 const modelDefiners = [];
